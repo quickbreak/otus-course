@@ -13,11 +13,13 @@ jobs:
         with:
           submodules: true
       - run: sudo apt-get update && sudo apt-get install libgtest-dev -y
-      - run: mkdir build && cd build
-      - run: cmake .. -DPATCH_VERSION=${{ github.run_number }}
-      - run: cmake --build .
-      - run: cmake --build . --target test
-      - run: cmake --build . --target package
+      - run: mkdir build
+      - run: |
+          cd build
+          cmake .. -DPATCH_VERSION=${{ github.run_number }}
+      - run: cmake --build ./bulid
+      - run: cmake --build ./build --target test
+      - run: cmake --build ./build --target package
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -35,6 +37,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./helloworld-0.0.${{ github.run_number }}-Linux.deb
+          asset_path: ./build/helloworld-0.0.${{ github.run_number }}-Linux.deb
           asset_name: helloworld-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
